@@ -1,0 +1,3 @@
+/k8s/prometheus/vendor
+/k8s/prometheus/manifests
+/.idea
