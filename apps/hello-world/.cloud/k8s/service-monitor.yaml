@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hello-world
+spec:
+  endpoints:
+    - targetPort: php-fpm-metrics
+      path: /metrics
+  jobLabel: hello-world
+  selector:
+    matchLabels:
+      app: hello-world

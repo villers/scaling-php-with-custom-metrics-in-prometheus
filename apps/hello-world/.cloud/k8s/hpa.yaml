@@ -1,0 +1,42 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hello-world
+  labels:
+    app: hello-world
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello-world
+  maxReplicas: 5
+  minReplicas: 1
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          averageUtilization: 70
+          type: Utilization
+    - type: Pods
+      pods:
+        metric:
+          name: phpfpm_process_state_percentage
+        target:
+          averageValue: 80
+          type: AverageValue
+
+
+#    - type: Pods
+#      pods:
+#        metric:
+#          name: nginx_connections_active
+#        target:
+#          type: AverageValue
+#          averageValue: {{ .Values.hpa.targets.nginx }}

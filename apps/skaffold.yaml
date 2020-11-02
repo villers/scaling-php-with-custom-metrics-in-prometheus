@@ -1,0 +1,25 @@
+apiVersion: skaffold/v2beta9
+kind: Config
+
+build:
+  artifacts:
+    - image: php
+      context: hello-world
+      docker:
+        dockerfile: .cloud/docker/Dockerfile
+        target: php
+    - image: nginx
+      context: hello-world
+      docker:
+        dockerfile: .cloud/docker/Dockerfile
+        target: nginx
+deploy:
+  kubectl:
+    manifests:
+      - "hello-world/.cloud/k8s/*.yaml"
+portForward:
+  - resourceType: service
+    resourceName: hello-world
+    namespace: default
+    port: 80 #
+    localPort: 8888 # *Optional*

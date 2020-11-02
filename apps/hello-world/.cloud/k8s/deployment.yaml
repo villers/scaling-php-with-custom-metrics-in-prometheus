@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  labels:
+    app: hello-world
+spec:
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: nginx
+              containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
+        - name: php-fpm-exporter
+          args:
+          - server
+          - --phpfpm.scrape-uri
+          - tcp://127.0.0.1:9000/status
+          command:
+            - ./php-fpm_exporter
+          image: hipages/php-fpm_exporter:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: php-fpm-metrics
+              containerPort: 9253
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 10m
+              memory: 20Mi
+        - name: php
+          image: php
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: php
+              containerPort: 9000
+          securityContext:
+            capabilities:
+              add:
+                - SYS_PTRACE
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
